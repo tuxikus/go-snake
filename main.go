@@ -79,13 +79,21 @@ func initGame() {
 
 func processInput() {
 	if rl.IsKeyPressed(rl.KeyUp) {
-		game.snake.tiles[0].direction = UP
+		if game.snake.tiles[0].direction != DOWN {
+			game.snake.tiles[0].direction = UP
+		}
 	} else if rl.IsKeyPressed(rl.KeyDown) {
-		game.snake.tiles[0].direction = DOWN
+		if game.snake.tiles[0].direction != UP {
+			game.snake.tiles[0].direction = DOWN
+		}
 	} else if rl.IsKeyPressed(rl.KeyLeft) {
-		game.snake.tiles[0].direction = LEFT
+		if game.snake.tiles[0].direction != RIGHT {
+			game.snake.tiles[0].direction = LEFT
+		}
 	} else if rl.IsKeyPressed(rl.KeyRight) {
-		game.snake.tiles[0].direction = RIGHT
+		if game.snake.tiles[0].direction != LEFT {
+			game.snake.tiles[0].direction = RIGHT
+		}
 	}
 }
 
