@@ -1,0 +1,15 @@
+* Go-Snake
+Snake written in go with [[https://github.com/raysan5/raylib][raylib]] [[https://github.com/tuxikus/go-snake][go bindings]].
+
+* How to run
+#+begin_src shell
+  git clone https://github.com/tuxikus/go-snake
+  cd go-snake
+  direnv allow # if using flake
+  go run .
+#+end_src
+
+* Screenshots
+[[./assets/screenshot1.png]]
+[[./assets/screenshot2.png]]
+[[./assets/screenshot3.png]]
