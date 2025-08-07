@@ -64,17 +64,9 @@ func initGame() {
 			direction: RIGHT,
 			pos:       rl.Vector2{X: 3, Y: 3},
 		},
-		{
-			direction: RIGHT,
-			pos:       rl.Vector2{X: 2, Y: 3},
-		},
-		{
-			direction: RIGHT,
-			pos:       rl.Vector2{X: 1, Y: 3},
-		},
 	}
 
-	game.snake.length = 3
+	game.snake.length = 1
 	newFood()
 }
 
@@ -117,6 +109,11 @@ func snakeMovement() {
 
 func drawSnake() {
 	for i := 0; i < int(game.snake.length); i++ {
+		if i == 0 {
+			rl.DrawRectangle(int32(game.snake.tiles[i].pos.X)*TILE_SIZE, int32(game.snake.tiles[i].pos.Y)*TILE_SIZE, TILE_SIZE, TILE_SIZE, rl.Lime)
+			continue
+		}
+
 		rl.DrawRectangle(int32(game.snake.tiles[i].pos.X)*TILE_SIZE, int32(game.snake.tiles[i].pos.Y)*TILE_SIZE, TILE_SIZE, TILE_SIZE, rl.Green)
 	}
 }
