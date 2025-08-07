@@ -118,10 +118,6 @@ func drawSnake() {
 	}
 }
 
-// r r r
-//
-//	  u
-//	r r
 func updateDirection() {
 	for i := game.snake.length - 1; i > 0; i-- {
 		game.snake.tiles[i].direction = game.snake.tiles[i-1].direction
@@ -147,8 +143,27 @@ func drawFood() {
 }
 
 func newFood() {
-	game.food.pos.X = float32(rand.IntN(int(game.world.width)-2) + 1)
-	game.food.pos.Y = float32(rand.IntN(int(game.world.heigth)-2) + 1)
+	checkSnake := func(x int, y int) bool {
+		for i := 0; i < int(game.snake.length); i++ {
+			if int(game.snake.tiles[i].pos.X) == x && int(game.snake.tiles[i].pos.Y) == y {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	x := rand.IntN(int(game.world.width)-2) + 1
+	y := rand.IntN(int(game.world.heigth)-2) + 1
+	fmt.Println(x, y)
+
+	for checkSnake(x, y) {
+		x = rand.IntN(int(game.world.width)-2) + 1
+		y = rand.IntN(int(game.world.heigth)-2) + 1
+	}
+
+	game.food.pos.X = float32(x)
+	game.food.pos.Y = float32(y)
 }
 
 func checkCollision() bool {
