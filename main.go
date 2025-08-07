@@ -22,7 +22,14 @@ const (
 	RIGHT = 3
 )
 
+const (
+	MENU    = 0
+	RUNNING = 1
+	END     = 2
+)
+
 type Direction int
+type GameState int
 
 type World struct {
 	tileSize int32
@@ -45,6 +52,7 @@ type Food struct {
 }
 
 type Game struct {
+	state GameState
 	world World
 	snake Snake
 	score int
@@ -54,6 +62,9 @@ type Game struct {
 var game = Game{}
 
 func initGame() {
+	game.state = MENU
+	game.score = 0
+
 	game.world = World{
 		width:  WIN_X / TILE_SIZE,
 		heigth: WIN_Y / TILE_SIZE,
@@ -155,7 +166,6 @@ func newFood() {
 
 	x := rand.IntN(int(game.world.width)-2) + 1
 	y := rand.IntN(int(game.world.heigth)-2) + 1
-	fmt.Println(x, y)
 
 	for checkSnake(x, y) {
 		x = rand.IntN(int(game.world.width)-2) + 1
@@ -220,38 +230,109 @@ func main() {
 
 	rl.SetTargetFPS(FPS)
 
-	fc := 0 // frame counter
+	selection := 0 // menu selection
+	fc := 0        // frame counter
 
 	for !rl.WindowShouldClose() {
 		fc++
 
-		///////////////////////////////////////////////////////////////
-		//                           Logic                           //
-		///////////////////////////////////////////////////////////////
-		processInput()
-
-		if fc >= FPS*1/8 {
-			snakeMovement()
-			updateDirection()
-
-			if checkCollision() {
-				return
+		switch game.state {
+		case MENU:
+			fc = 0
+			if rl.IsKeyPressed(rl.KeyEnter) {
+				switch selection {
+				case 0:
+					game.state = RUNNING
+				case 1:
+					return
+				}
 			}
 
+			if rl.IsKeyPressed(rl.KeyDown) {
+				selection = 1
+			} else if rl.IsKeyPressed(rl.KeyUp) {
+				selection = 0
+			}
+
+			rl.BeginDrawing()
+			rl.ClearBackground(rl.RayWhite)
+
+			// header
+			rl.DrawText("Go-Snake", WIN_X/2-rl.MeasureText("Go-Snake", 64)/2, WIN_Y/6, 64, rl.Black)
+
+			switch selection {
+			case 0:
+				rl.DrawText("Start", WIN_X/2-rl.MeasureText("Start", 32)/2, WIN_Y/2, 32, rl.Red)
+				rl.DrawText("Exit", WIN_X/2-rl.MeasureText("Exit", 32)/2, WIN_Y/2+64, 32, rl.Black)
+			case 1:
+				rl.DrawText("Start", WIN_X/2-rl.MeasureText("Start", 32)/2, WIN_Y/2, 32, rl.Black)
+				rl.DrawText("Exit", WIN_X/2-rl.MeasureText("Exit", 32)/2, WIN_Y/2+64, 32, rl.Red)
+			}
+
+			rl.EndDrawing()
+		case RUNNING:
+			///////////////////////////////////////////////////////////////
+			//                           Logic                           //
+			///////////////////////////////////////////////////////////////
+			processInput()
+
+			if fc >= FPS*1/8 {
+				snakeMovement()
+				updateDirection()
+
+				if checkCollision() {
+					game.state = END
+				}
+
+				fc = 0
+			}
+
+			///////////////////////////////////////////////////////////////
+			//                          Drawing                          //
+			///////////////////////////////////////////////////////////////
+			rl.BeginDrawing()
+			rl.ClearBackground(rl.RayWhite)
+
+			drawBorder()
+			drawSnake()
+			drawFood()
+			drawScore()
+
+			rl.EndDrawing()
+
+		case END:
 			fc = 0
+			if rl.IsKeyPressed(rl.KeyEnter) {
+				switch selection {
+				case 0:
+					initGame()
+					game.state = RUNNING
+				case 1:
+					return
+				}
+			}
+
+			if rl.IsKeyPressed(rl.KeyDown) {
+				selection = 1
+			} else if rl.IsKeyPressed(rl.KeyUp) {
+				selection = 0
+			}
+
+			rl.BeginDrawing()
+			rl.ClearBackground(rl.RayWhite)
+
+			switch selection {
+			case 0:
+				rl.DrawText("Retry", WIN_X/2-rl.MeasureText("Retry", 32)/2, WIN_Y/2, 32, rl.Red)
+				rl.DrawText("Exit", WIN_X/2-rl.MeasureText("Exit", 32)/2, WIN_Y/2+64, 32, rl.Black)
+			case 1:
+				rl.DrawText("Retry", WIN_X/2-rl.MeasureText("Retry", 32)/2, WIN_Y/2, 32, rl.Black)
+				rl.DrawText("Exit", WIN_X/2-rl.MeasureText("Exit", 32)/2, WIN_Y/2+64, 32, rl.Red)
+			}
+
+			rl.DrawText("Final Score:", WIN_X/2-rl.MeasureText("Final Score:", 64)/2, WIN_Y/6, 64, rl.Black)
+			rl.DrawText(fmt.Sprintf("%d", game.score), WIN_X/2-rl.MeasureText(fmt.Sprintf("%d", game.score), 64)/2, WIN_Y/3, 64, rl.Black)
+			rl.EndDrawing()
 		}
-
-		///////////////////////////////////////////////////////////////
-		//                          Drawing                          //
-		///////////////////////////////////////////////////////////////
-		rl.BeginDrawing()
-		rl.ClearBackground(rl.RayWhite)
-
-		drawBorder()
-		drawSnake()
-		drawFood()
-		drawScore()
-
-		rl.EndDrawing()
 	}
 }
