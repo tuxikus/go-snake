@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand/v2"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -188,10 +189,15 @@ func checkCollision() bool {
 		})
 
 		game.snake.length++
+		game.score += 10
 		newFood()
 	}
 
 	return false
+}
+
+func drawScore() {
+	rl.DrawText(fmt.Sprintf("Score: %d", game.score), TILE_SIZE, 1, 20, rl.Black)
 }
 
 func main() {
@@ -232,6 +238,7 @@ func main() {
 		drawBorder()
 		drawSnake()
 		drawFood()
+		drawScore()
 
 		rl.EndDrawing()
 	}
