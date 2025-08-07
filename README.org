@@ -9,6 +9,12 @@ Snake written in go with [[https://github.com/raysan5/raylib][raylib]] [[https:/
   go run .
 #+end_src
 
+* Controls
+| *Key*    | *Action*   |
+| ESC    | Exit     |
+| Enter  | Select   |
+| Arrows | Movement |
+
 * Screenshots
 [[./assets/screenshot1.png]]
 [[./assets/screenshot2.png]]
